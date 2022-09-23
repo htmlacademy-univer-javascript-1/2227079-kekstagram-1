@@ -13,3 +13,4 @@ function randomPositiveNum (leftBorder, rightBorder) {
 }
 
 console.log(randomPositiveNum(1, 1));
+

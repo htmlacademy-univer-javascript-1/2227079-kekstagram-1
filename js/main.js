@@ -14,7 +14,12 @@ function randomPositiveNum (leftBorder, rightBorder) {
   return Math.floor(left + Math.random() * right);
 }
 
+function lengthCheck (line, maxLength) {
+  return line.length <= maxLength;
+}
+
 // eslint-disable-next-line no-console
 console.log(randomPositiveNum(1, 1));
-
+// eslint-disable-next-line no-console
+console.log(lengthCheck('aaaa', 10));
 

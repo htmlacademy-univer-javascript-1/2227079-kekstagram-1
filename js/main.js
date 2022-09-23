@@ -17,3 +17,4 @@ function randomPositiveNum (leftBorder, rightBorder) {
 // eslint-disable-next-line no-console
 console.log(randomPositiveNum(1, 1));
 
+

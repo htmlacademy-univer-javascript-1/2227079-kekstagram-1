@@ -1,16 +1,16 @@
-function randomPositiveNum (leftBorder, rightBorder) {
+function getrandomPositiveNum (leftBorder, rightBorder) {
   if (leftBorder < 0 || rightBorder < 0) {
     return 0;
   }
   return Math.floor(Math.random() * Math.abs(leftBorder - rightBorder) + Math.min(leftBorder, rightBorder));
 }
 
-function lengthCheck (line, maxLength) {
+function checkLength (line, maxLength) {
   return line.length <= maxLength;
 }
 
 // eslint-disable-next-line no-console
-console.log(randomPositiveNum(1, 10));
+console.log(getrandomPositiveNum(1000, 1001));
 // eslint-disable-next-line no-console
-console.log(lengthCheck('aaaa', 10));
+console.log(checkLength('aaaa', 10));
 

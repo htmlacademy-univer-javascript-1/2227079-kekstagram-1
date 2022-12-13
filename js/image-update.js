@@ -1,4 +1,4 @@
-import {isEscapeKey} from './utils.js';
+import {isEscapeKey} from './util.js';
 
 const imageUpdateForm = document.querySelector('.img-upload__form');
 const submitButton = imageUpdateForm.querySelector('.img-upload__submit');
@@ -70,6 +70,8 @@ const closeOverlay = () => {
 
 const onEscapeKeydown = (evt) => {
   if (isEscapeKey(evt.key) && evt.target !== textHashtags && evt.target !== textDescription) {closeOverlay();}
+  evt.preventDefault();
+  closeOverlay();
 };
 
 fileUpdateButton.addEventListener('change', () => {

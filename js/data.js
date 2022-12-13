@@ -4,9 +4,10 @@ import { faker } from 'https://cdn.skypack.dev/@faker-js/faker';
 const PHOTOS_NUMBER = 25;
 const MIN_LIKES_NUMBER  = 15;
 const MAX_LIKES_NUMBER  = 200;
+const MAX_COMMENTS_NUMBER  = 100;
 const MAX_AVATAR_NUM = 6;
 
-const COMMENTS_MESSAGE = [
+const MESSAGES = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',
   'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
@@ -15,25 +16,29 @@ const COMMENTS_MESSAGE = [
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
 ];
 
-const createComments = () => Array.from({length: getRandomPositiveNum(0, 100)}).map((value, index) => ({
-  id: index + 1,
+let commentIndex = 0;
+let photoDescriptionIndex = 0;
+
+const getCommentId = () => commentIndex++;
+
+const getPhotoDescriptionId = () => photoDescriptionIndex++;
+
+const createComment = () => ({
+  id: getCommentId(),
   avatar: `img/avatar-${getRandomPositiveNum(1, MAX_AVATAR_NUM)}.svg`,
-  message: COMMENTS_MESSAGE[getRandomPositiveNum(0, COMMENTS_MESSAGE.length - 1)],
+  message: MESSAGES[getRandomPositiveNum(0, MESSAGES.length-1)],
   name: faker.name.firstName()
-}));
+});
 
-
-const createPhotos = () => Array.from({length: PHOTOS_NUMBER}).map((value, index) => ({
-  id: index + 1,
-  url: `photos/${index + 1}.jpg`,
-  description: COMMENTS_MESSAGE[getRandomPositiveNum(0, COMMENTS_MESSAGE.length - 1)],
+const createPhotoDescription = () => ({
+  id: getPhotoDescriptionId(),
+  url: `photos/${photoDescriptionIndex}.jpg`,
+  description: faker.lorem.paragraph(),
   likes: getRandomPositiveNum(MIN_LIKES_NUMBER, MAX_LIKES_NUMBER),
-  comments: createComments(),
-}));
+  comments: Array.from({length: getRandomPositiveNum(1,MAX_COMMENTS_NUMBER)}, createComment)
+});
 
-const arrayOfPhotos = Array.from({length: PHOTOS_NUMBER}, createPhotos);
+const arrayOfPhotos = Array.from({length: PHOTOS_NUMBER}, createPhotoDescription);
 
-createPhotos();
-checkLength('aaaaaaaaaaaaa', 6);
-
-export {arrayOfPhotos};
+checkLength('aaaa', 3);
+export{arrayOfPhotos};

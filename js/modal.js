@@ -53,7 +53,7 @@ const onModalPictureKeydown = (evt) => {
   }
 };
 
-const openModalPicture = ({url, likes,comments, description}) => {
+const openModalPicture = ({url, likes, comments, description}) => {
   document.body.classList.add('modal-open');
   pictureModalElement.classList.remove('hidden');
   imageElement.src = url;

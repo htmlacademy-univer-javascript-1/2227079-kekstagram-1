@@ -70,6 +70,8 @@ const closeOverlay = () => {
 
 const onEscapeKeydown = (evt) => {
   if (isEscapeKey(evt.key) && evt.target !== textHashtags && evt.target !== textDescription) {closeOverlay();}
+  evt.preventDefault();
+  closeOverlay();
 };
 
 fileUpdateButton.addEventListener('change', () => {

@@ -9,4 +9,6 @@ function checkLength (line, maxLength) {
   return line.length <= maxLength;
 }
 
-export {getRandomPositiveNum, checkLength};
+const isEscapeKey = (key) => key === 'Escape';
+
+export {getRandomPositiveNum, checkLength, isEscapeKey};

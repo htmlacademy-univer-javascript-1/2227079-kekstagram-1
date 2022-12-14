@@ -127,17 +127,6 @@ const onFormSubmit = (evt) => {
 
 imageUpdateForm.addEventListener('submit', onFormSubmit);
 
-noUiSlider.create(
-  effectLevelSlider, {
-    range: {
-      min: 0,
-      max: 100,
-    },
-    start: 100,
-    connect: 'lower'
-  }
-);
-
 const removePercentage =() => scaleControlValue.value.replace('%', '');
 
 const updateScale = (newValue) => {
@@ -214,16 +203,26 @@ fileUpdateButton.addEventListener('change', () => {
   closeFormButton.addEventListener('click', closeOverlay, {once: true});
   document.body.classList.add('modal-open');
   overlay.classList.remove('hidden');
-});
 
-scaleControlSmaller.addEventListener('click', onScaleControlSmallerClick);
-scaleControlBigger.addEventListener('click', onScaleControlBiggerClick);
-scaleControlValue.value = '100%';
-currentEffect = 'effect-none';
-imageUpdatePreview.className = 'img-upload__preview';
-imageUpdatePreview.classList.add('effects__preview--none');
-imageUpdateForm.addEventListener('change', onChangeEffects);
-effectLevelSlider.noUiSlider.on('update', onSliderUpdate);
-imageUpdateEffectLevel.classList.add('hidden');
-imageUpdatePreview.style.transform = 'scale(1)';
-imageUpdatePreview.style.filter = 'none';
+  noUiSlider.create(
+    effectLevelSlider, {
+      range: {
+        min: 0,
+        max: 100,
+      },
+      start: 100,
+      connect: 'lower'
+    }
+  );
+  scaleControlSmaller.addEventListener('click', onScaleControlSmallerClick);
+  scaleControlBigger.addEventListener('click', onScaleControlBiggerClick);
+  scaleControlValue.value = '100%';
+  currentEffect = 'effect-none';
+  imageUpdatePreview.className = 'img-upload__preview';
+  imageUpdatePreview.classList.add('effects__preview--none');
+  imageUpdateForm.addEventListener('change', onChangeEffects);
+  effectLevelSlider.noUiSlider.on('update', onSliderUpdate);
+  imageUpdateEffectLevel.classList.add('hidden');
+  imageUpdatePreview.style.transform = 'scale(1)';
+  imageUpdatePreview.style.filter = 'none';
+});

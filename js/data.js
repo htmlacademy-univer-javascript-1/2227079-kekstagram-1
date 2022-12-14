@@ -33,7 +33,6 @@ const createPhotos = () => Array.from({length: PHOTOS_NUMBER}).map((value, index
 
 const arrayOfPhotos = createPhotos();
 
-createPhotos();
 checkLength('aaaaaaaaaaaaa', 6);
 
 export {arrayOfPhotos};

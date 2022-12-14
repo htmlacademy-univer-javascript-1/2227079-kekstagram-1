@@ -1,6 +1,5 @@
 import { isEscapeKey } from './util.js';
 
-
 const pictureModalElement =  document.querySelector('.big-picture');
 const currentCommentsCountElement = pictureModalElement.querySelector('.social__comment-count');
 const commentsLoaderElement = pictureModalElement.querySelector('.social__comments-loader');

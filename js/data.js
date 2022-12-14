@@ -31,9 +31,8 @@ const createPhotos = () => Array.from({length: PHOTOS_NUMBER}).map((value, index
   comments: createComments(),
 }));
 
-const arrayOfPhotos = Array.from({length: PHOTOS_NUMBER}, createPhotos);
+const arrayOfPhotos = createPhotos();
 
-createPhotos();
 checkLength('aaaaaaaaaaaaa', 6);
 
 export {arrayOfPhotos};

@@ -1,6 +1,5 @@
 import { isEscapeKey } from './util.js';
 
-
 const pictureModalElement =  document.querySelector('.big-picture');
 const currentCommentsCountElement = pictureModalElement.querySelector('.social__comment-count');
 const commentsLoaderElement = pictureModalElement.querySelector('.social__comments-loader');
@@ -53,7 +52,7 @@ const onModalPictureKeydown = (evt) => {
   }
 };
 
-const openModalPicture = ({url, likes,comments, description}) => {
+const openModalPicture = ({url, likes, comments, description}) => {
   document.body.classList.add('modal-open');
   pictureModalElement.classList.remove('hidden');
   imageElement.src = url;

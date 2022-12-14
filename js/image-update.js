@@ -3,6 +3,8 @@ import {isEscapeKey} from './util.js';
 const SCALE_MIN = 25;
 const SCALE_MAX = 100;
 const SCALE_STEP = 25;
+const MAX_HASHTAGS_NUM = 5;
+const MAX_COMMENT_LENGTH = 140;
 
 const overlay = document.querySelector('.img-upload__overlay');
 const effectLevelSlider = overlay.querySelector('.effect-level__slider');
@@ -78,11 +80,18 @@ const regexCheck = /(^#[0-9А-Яа-яЁёA-Za-z]{1,19}$)|(^\s*$)/;
 const hasDuplicates = (arr) => new Set(arr).size !== arr.length;
 
 const checkHashtagsInput = (value) => {
-  const separateHashtags = value.split(' ');
-  if (separateHashtags.length > 5) {return false;}
-  const values = separateHashtags.map((e) => e.toLowerCase());
-  if (hasDuplicates(values)) {return false;}
-  return separateHashtags.every((e) => regexCheck.test(e));
+  if(value === '') {
+    return true;
+  }
+  const separatedHashtags = value.split(' ');
+  if (separatedHashtags.length > MAX_HASHTAGS_NUM) {
+    return false;
+  }
+  const values = separatedHashtags.map((element) => element.toLowerCase());
+  if (hasDuplicates(values)) {
+    return false;
+  }
+  return separatedHashtags.every((element) => regexCheck.test(element));
 };
 
 const disableSubmitButton = () => {submitButton.disabled = !isHashtagInputValid || !isCommentValid;};
@@ -93,7 +102,7 @@ const checkHashtags = (value) => {
 };
 
 const checkComments = (value) => {
-  isCommentValid = value.length <= 140;
+  isCommentValid = value.length <= MAX_COMMENT_LENGTH ;
   disableSubmitButton();
 };
 
@@ -115,7 +124,7 @@ pristine.addValidator(
 pristine.addValidator(
   textDescription,
   checkComments,
-  'Максимальная длина комментария 140 символов'
+  `Максимальная длина комментария ${MAX_COMMENT_LENGTH} символов`
 );
 
 const onFormSubmit = (evt) => {

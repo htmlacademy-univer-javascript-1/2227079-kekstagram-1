@@ -1,9 +1,18 @@
 import {isEscapeKey} from './util.js';
+import {uploadDataToServer} from './www-net.js';
 
 const SCALE_MIN = 25;
 const SCALE_MAX = 100;
 const SCALE_STEP = 25;
+const MAX_HASHTAGS_NUM = 5;
+const MAX_COMMENT_LENGTH = 140;
 
+const error = document.querySelector('#error').content.querySelector('.error');
+const success = document.querySelector('#success').content.querySelector('.success');
+const errorButton = error.querySelector('.error__button');
+const successButton = success.querySelector('.success__button');
+
+const body = document.querySelector('body');
 const overlay = document.querySelector('.img-upload__overlay');
 const effectLevelSlider = overlay.querySelector('.effect-level__slider');
 const effectLevelValue = overlay.querySelector('.effect-level__value');
@@ -70,73 +79,120 @@ const textHashtags = imageUpdateForm.querySelector('.text__hashtags');
 const textDescription = imageUpdateForm.querySelector('.text__description');
 const closeFormButton = document.querySelector('#upload-cancel');
 
-let isCommentValid = true;
-let isHashtagInputValid = true;
-
 const regexCheck = /(^#[0-9А-Яа-яЁёA-Za-z]{1,19}$)|(^\s*$)/;
 
 const hasDuplicates = (arr) => new Set(arr).size !== arr.length;
 
 const checkHashtagsInput = (value) => {
-  const separateHashtags = value.split(' ');
-  if (separateHashtags.length > 5) {return false;}
-  const values = separateHashtags.map((e) => e.toLowerCase());
-  if (hasDuplicates(values)) {return false;}
-  return separateHashtags.every((e) => regexCheck.test(e));
+  if(value === '') {
+    return true;
+  }
+  const separatedHashtags = value.split(' ');
+  if (separatedHashtags.length > MAX_HASHTAGS_NUM) {
+    return false;
+  }
+  const values = separatedHashtags.map((element) => element.toLowerCase());
+  if (hasDuplicates(values)) {
+    return false;
+  }
+  return separatedHashtags.every((element) => regexCheck.test(element));
 };
 
-const disableSubmitButton = () => {submitButton.disabled = !isHashtagInputValid || !isCommentValid;};
-
-const checkHashtags = (value) => {
-  isHashtagInputValid = checkHashtagsInput(value);
-  disableSubmitButton();
+const disableSubmitButton = () => {
+  submitButton.textContent = 'Подождите...';
+  submitButton.disabled = true;
 };
 
-const checkComments = (value) => {
-  isCommentValid = value.length <= 140;
-  disableSubmitButton();
+const enableSubmitButton = () => {
+  submitButton.textContent = 'Опубликовать';
+  submitButton.disabled = false;
 };
+
+const checkHashtags = (value) => checkHashtagsInput(value);
+
+const checkComments = (value) => value.length <= MAX_COMMENT_LENGTH;
 
 const pristine = new Pristine(imageUpdateForm, {
-  classTo: 'form-group',
-  errorClass: 'has-danger',
-  successClass: 'has-success',
-  errorTextParent: 'form-group',
-  errorTextTag: 'div',
-  errorTextClass: 'text-help'
+  classTo: 'img-upload__field-wrapper',
+  errorTextParent: 'img-upload__field-wrapper',
+  errorTextClass: 'text-invalid__error'
 }, true);
 
 pristine.addValidator(
   textHashtags,
-  checkHashtags,
+  (value) => checkHashtags(value),
   'Некорректно указаны хештэги'
 );
 
+
 pristine.addValidator(
   textDescription,
-  checkComments,
-  'Максимальная длина комментария 140 символов'
+  (value) => checkComments(value),
+  `Максимальная длина комментария ${MAX_COMMENT_LENGTH} символов`
 );
 
+const closeSuccessErrorMessages = () => {
+  if (body.contains(error)) {
+    body.removeChild(error);
+    overlay.classList.remove('hidden');
+  }
+  if (body.contains(success)) {
+    body.removeChild(success);
+  }
+  document.removeEventListener('keydown', onEscapeKeydownError);
+  document.removeEventListener('click', onClickSuccess);
+  successButton.removeEventListener('click', closeSuccessErrorMessages);
+  document.removeEventListener('click', onClickError);
+  errorButton.removeEventListener('click', closeSuccessErrorMessages);
+};
+
 const onFormSubmit = (evt) => {
+  evt.preventDefault();
   const isValid = pristine.validate();
-  if (!isValid) {
-    evt.preventDefault();
+  if (isValid) {
+    disableSubmitButton();
+    uploadDataToServer(
+      () => {
+        closeOverlay();
+        enableSubmitButton();
+        document.addEventListener('keydown', onEscapeKeydownError);
+        document.addEventListener('click', onClickSuccess);
+        successButton.addEventListener('click', closeSuccessErrorMessages);
+        body.appendChild(success);
+      },
+      () => {
+        overlay.classList.add('hidden');
+        enableSubmitButton();
+        document.addEventListener('keydown', onEscapeKeydownError);
+        document.addEventListener('click', onClickError);
+        errorButton.addEventListener('click', closeSuccessErrorMessages);
+        body.appendChild(error);
+      },
+      new FormData(evt.target),
+    );
   }
 };
 
-imageUpdateForm.addEventListener('submit', onFormSubmit);
-
-noUiSlider.create(
-  effectLevelSlider, {
-    range: {
-      min: 0,
-      max: 100,
-    },
-    start: 100,
-    connect: 'lower'
+function onClickSuccess (evt) {
+  if (evt.target === success) {
+    closeSuccessErrorMessages();
   }
-);
+}
+
+function onClickError (evt) {
+  if (evt.target === error) {
+    closeSuccessErrorMessages();
+  }
+}
+
+function onEscapeKeydownError (evt) {
+  if (isEscapeKey(evt.key)) {
+    closeSuccessErrorMessages();
+  }
+}
+
+
+imageUpdateForm.addEventListener('submit', onFormSubmit);
 
 const removePercentage =() => scaleControlValue.value.replace('%', '');
 
@@ -188,7 +244,7 @@ const onSliderUpdate = () => {
     : '';
 };
 
-const closeOverlay = () => {
+function closeOverlay () {
   imageUpdateForm.reset();
   overlay.classList.add('hidden');
   document.body.classList.remove('modal-open');
@@ -201,29 +257,48 @@ const closeOverlay = () => {
   document.body.classList.remove('modal-open');
   effectLevelSlider.noUiSlider.destroy();
   pristine.destroy();
-};
+}
 
 function onEscapeKeydown(evt) {
-  if (isEscapeKey(evt.key) && evt.target !== textHashtags && evt.target !== textDescription) {closeOverlay();}
-  evt.preventDefault();
-  closeOverlay();
+  if (isEscapeKey(evt.key) && evt.target !== textHashtags && evt.target !== textDescription && !body.contains(error)) {
+    evt.preventDefault();
+    closeOverlay();
+  }
 }
+
+const onCloseClick = () => {
+  closeOverlay();
+};
 
 fileUpdateButton.addEventListener('change', () => {
   document.addEventListener('keydown', onEscapeKeydown);
-  closeFormButton.addEventListener('click', closeOverlay, {once: true});
+  closeFormButton.addEventListener('click', onCloseClick, {once: true});
   document.body.classList.add('modal-open');
   overlay.classList.remove('hidden');
-});
 
-scaleControlSmaller.addEventListener('click', onScaleControlSmallerClick);
-scaleControlBigger.addEventListener('click', onScaleControlBiggerClick);
-scaleControlValue.value = '100%';
-currentEffect = 'effect-none';
-imageUpdatePreview.className = 'img-upload__preview';
-imageUpdatePreview.classList.add('effects__preview--none');
-imageUpdateForm.addEventListener('change', onChangeEffects);
-effectLevelSlider.noUiSlider.on('update', onSliderUpdate);
-imageUpdateEffectLevel.classList.add('hidden');
-imageUpdatePreview.style.transform = 'scale(1)';
-imageUpdatePreview.style.filter = 'none';
+  scaleControlSmaller.addEventListener('click', onScaleControlSmallerClick);
+  scaleControlBigger.addEventListener('click', onScaleControlBiggerClick);
+  scaleControlValue.value = '100%';
+
+  noUiSlider.create(
+    effectLevelSlider, {
+      range: {
+        min: 0,
+        max: 100,
+      },
+      start: 100,
+      connect: 'lower'
+    }
+  );
+  scaleControlSmaller.addEventListener('click', onScaleControlSmallerClick);
+  scaleControlBigger.addEventListener('click', onScaleControlBiggerClick);
+  scaleControlValue.value = '100%';
+  currentEffect = 'effect-none';
+  imageUpdatePreview.className = 'img-upload__preview';
+  imageUpdatePreview.classList.add('effects__preview--none');
+  imageUpdateForm.addEventListener('change', onChangeEffects);
+  effectLevelSlider.noUiSlider.on('update', onSliderUpdate);
+  imageUpdateEffectLevel.classList.add('hidden');
+  imageUpdatePreview.style.transform = 'scale(1)';
+  imageUpdatePreview.style.filter = 'none';
+});

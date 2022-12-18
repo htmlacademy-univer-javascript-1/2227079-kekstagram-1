@@ -1,4 +1,4 @@
-import {renderPictures} from './pictures.js';
+import {initializePhoto} from './pictures.js';
 import './image-update.js';
 import {loadDataFromServer} from './www-net.js';
 
@@ -24,8 +24,8 @@ const showDownloadErrorMessage = () => {
   body.appendChild(errorDiv);
 };
 
-loadDataFromServer(() => {
-  renderPictures();
+loadDataFromServer((photos) => {
+  initializePhoto(photos);
 },
 () => {
   showDownloadErrorMessage();

@@ -1,4 +1,4 @@
-import {initializePhoto} from './pictures.js';
+import {initializePhotosFilters} from './pictures.js';
 import './image-update.js';
 import {loadDataFromServer} from './www-net.js';
 
@@ -25,7 +25,7 @@ const showDownloadErrorMessage = () => {
 };
 
 loadDataFromServer((photos) => {
-  initializePhoto(photos);
+  initializePhotosFilters(photos);
 },
 () => {
   showDownloadErrorMessage();

@@ -1,10 +1,10 @@
 import { isEscapeKey } from './util.js';
 
-const pictureModalElement =  document.querySelector('.big-picture');
-const currentCommentsCountElement = pictureModalElement.querySelector('.social__comment-count');
-const commentsLoaderElement = pictureModalElement.querySelector('.social__comments-loader');
+const photoModalElement =  document.querySelector('.big-picture');
+const currentCommentsCountElement = photoModalElement.querySelector('.social__comment-count');
+const commentsLoaderElement = photoModalElement.querySelector('.social__comments-loader');
 const commentCountElement = document.querySelector('.comments-count');
-const imageElement = document.querySelector('.big-picture__img img');
+const photoElement = document.querySelector('.big-picture__img img');
 const likesCountElement = document.querySelector('.likes-count');
 const descriptionElement = document.querySelector('.social__caption');
 const buttonCloseElement = document.querySelector('#picture-cancel');
@@ -34,28 +34,28 @@ function renderComments (commentsNumber)  {
   currentCommentsCountElement.textContent = `Показано ${currentNumberOfRenderedComments} из ${numberOfComments} комментариев`;
 }
 
-const closeModalPicture =  () => {
-  pictureModalElement.classList.add('hidden');
+const closeModalPhoto =  () => {
+  photoModalElement.classList.add('hidden');
   currentCommentsCountElement.classList.add('hidden');
   commentsLoaderElement.classList.add('hidden');
   document.body.classList.remove('modal-open');
   commentsLoaderElement.removeEventListener('click', renderComments);
 };
 
-const onModalPictureCloseClick = () => {
-  closeModalPicture();
+const onModalPhotoCloseClick = () => {
+  closeModalPhoto();
 };
 
-const onModalPictureKeydown = (evt) => {
+const onModalPhotoKeydown = (evt) => {
   if(isEscapeKey(evt.key)) {
-    closeModalPicture();
+    closeModalPhoto();
   }
 };
 
-const openModalPicture = ({url, likes, comments, description}) => {
+const openModalPhoto = ({url, likes, comments, description}) => {
   document.body.classList.add('modal-open');
-  pictureModalElement.classList.remove('hidden');
-  imageElement.src = url;
+  photoModalElement.classList.remove('hidden');
+  photoElement.src = url;
   commentCountElement.textContent = comments.length;
   likesCountElement.textContent = likes;
   descriptionElement.textContent = description;
@@ -72,8 +72,8 @@ const openModalPicture = ({url, likes, comments, description}) => {
   }
   const initialCommentsNumber = numberOfComments <= 5 ? numberOfComments : 5;
   renderComments(initialCommentsNumber);
-  document.addEventListener('keydown', onModalPictureKeydown);
-  buttonCloseElement.addEventListener('click', onModalPictureCloseClick, {once: true});
+  document.addEventListener('keydown', onModalPhotoKeydown);
+  buttonCloseElement.addEventListener('click', onModalPhotoCloseClick, {once: true});
 };
 
-export {openModalPicture};
+export {openModalPhoto};

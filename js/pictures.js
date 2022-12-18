@@ -1,4 +1,4 @@
-import {openModalPicture} from './modal.js';
+import {openModalPhoto} from './modal.js';
 import {debounce} from './util.js';
 import {faker} from 'https://cdn.skypack.dev/@faker-js/faker';
 
@@ -45,7 +45,7 @@ const renderPhoto = () => {
     const photoElement = evt.target.closest('.picture');
     if (photoElement) {
       const clickedPhoto = photoToRender.find(({ id }) => Number(photoElement.dataset.id) === id);
-      openModalPicture(clickedPhoto);
+      openModalPhoto(clickedPhoto);
     }
   });
 };
@@ -57,7 +57,7 @@ const setActive = (button) => {
   button.classList.add('img-filters__button--active');
 };
 
-const initializePhoto = (photos) => {
+const initializePhotosFilters = (photos) => {
   photoFilters.classList.remove('img-filters--inactive');
   photoToRender = photos;
   renderPhoto();
@@ -88,4 +88,4 @@ const initializePhoto = (photos) => {
   });
 };
 
-export {initializePhoto};
+export {initializePhotosFilters};
